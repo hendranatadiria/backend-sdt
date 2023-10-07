@@ -1,5 +1,5 @@
 import { NextFunction, type Request, type Response } from 'express';
-import { createUserSchema } from '../schemas/user.schemas';
+import { createUserSchema, deleteUserSchema } from '../schemas/user.schemas';
 import { db } from '../config/db';
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,4 +21,21 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 } catch (err) {
   next(err);
 }
+}
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await deleteUserSchema.validate(req.body);
+
+    const result = await db.user.delete({
+      where: {
+        emailAddress: data.emailAddress
+      }
+    })
+
+    return res.json(result);
+
+  } catch (err) {
+    next(err);
+  }
 }

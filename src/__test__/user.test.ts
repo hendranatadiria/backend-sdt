@@ -16,6 +16,10 @@ const userCreateData = {
   location: 'Asia/Manila',
 }
 
+const userDeleteData = {
+  emailAddress: userCreateData.emailAddress,
+}
+
 describe('Testing /user endpoints', () => {
   beforeAll(async () => {
     await truncate();
@@ -45,6 +49,31 @@ describe('Testing /user endpoints', () => {
   describe('POST /user again with the same data', () => {
     it('should return 400 with error message', async () => {
       const res = await request(app).post('/user').send(userCreateData);
+      
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.message).toEqual('Validation Error');
+    })
+  })
+
+  describe('DELETE /user', () => {
+    it ("should return 200 with newly created user", async () => {
+      const res = await request(app).delete('/user').send(userDeleteData);
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.data).toMatchObject({
+        id: expect.any(Number),
+        ...userCreateData,
+        birthday: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
+
+    })
+  })
+
+  describe('DELETE /user again with the same data', () => {
+    it('should return 400 with error message', async () => {
+      const res = await request(app).delete('/user').send(userDeleteData);
       
       expect(res.statusCode).toEqual(400);
       expect(res.body.message).toEqual('Validation Error');

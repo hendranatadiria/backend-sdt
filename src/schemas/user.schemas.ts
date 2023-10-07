@@ -3,6 +3,8 @@ import * as yup from 'yup'
 import yupDateUtc from '../tools/yupDateUtc';
 import { db } from '../config/db';
 
+
+// Check whether the provided data is a valid IANA time zone
 yup.addMethod(yup.string, 'ianaTz', function (this, message:string) {
   return this.test('ianaTz-test', message, function (value) {
     let msgError = message || 'Invalid time zone';
@@ -12,16 +14,24 @@ yup.addMethod(yup.string, 'ianaTz', function (this, message:string) {
   })
 })
 
-yup.addMethod(yup.string, 'singleEmail', function (this, message:string) {
+// Check for email if it exists in the database
+// returnOnNull: true - return error if email exists (e.g. to validate that email needs to be only used once)
+// returnOnNull: false - return error if email does not exist (e.g. to validate that email exists in the database before operation)
+yup.addMethod(yup.string, 'singleEmail', function (this, message:string, returnOnNull: boolean = true) {
   return this.test('singleEmail-test', message, function (value) {
     const {path, createError} = this;
-    let msgError = message || 'Email already exists';
+    let msgError = message || ( returnOnNull ? 'Email already exists' : 'Email does not exist' );
 
     return db.user.findFirst({where: {emailAddress: value}}).then((user) => {
+      if (returnOnNull) {
       return user == null || createError({path, message: msgError});
+      } else {
+        return user != null || createError({path, message: msgError});
+      }
     })
   })
 })
+
 
 export const createUserSchema = yup.object().shape({
   emailAddress: yup.string().email("Invalid email format").singleEmail().required("Email is required"),
@@ -40,5 +50,5 @@ export const updateUserSchema = yup.object().shape({
 });
 
 export const deleteUserSchema = yup.object().shape({
-  emailAddress: yup.string().email("Invalid email format").required("Email is required"),
+  emailAddress: yup.string().email("Invalid email format").singleEmail(undefined, false).required("Email is required"),
 });
