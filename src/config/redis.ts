@@ -21,9 +21,6 @@ export const redisAuthConn:ConnectionOptions = {
   port: process.env.REDIS_AUTH_PORT ? parseInt(process.env.REDIS_AUTH_PORT) : undefined,
   username: process.env.REDIS_AUTH_USERNAME,
   password: process.env.REDIS_AUTH_PASSWORD,
-  tls: {
-    rejectUnauthorized: false
-  }
 };
 
 export const EMAIL_QUEUE_NAME = 'emailQueue';

@@ -3,6 +3,8 @@ import router from './routes'
 import cors from 'cors'
 import errorHandler from './middlewares/error-handler'
 import SdtJson from './middlewares/SdtJson'
+import cron from 'node-cron'
+import { birthdayChecker } from './controllers/cronjob.controller'
 
 const port = process.env.PORT || 3000
 const api = express()
@@ -19,5 +21,7 @@ const srv = api.listen(port, () => {
   console.log(`API listening on port ${port}`)
   
 })
+
+cron.schedule('0 * * * *', birthdayChecker)
 
 export default srv;
