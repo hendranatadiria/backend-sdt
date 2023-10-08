@@ -20,6 +20,11 @@ const userDeleteData = {
   emailAddress: userCreateData.emailAddress,
 }
 
+const userUpdateData = {
+  ...userCreateData,
+  firstName: 'Updated',
+}
+
 describe('Testing /user endpoints', () => {
   beforeAll(async () => {
     await truncate();
@@ -55,6 +60,21 @@ describe('Testing /user endpoints', () => {
     })
   })
 
+  describe('PUT /user', () => {
+    it('should return 200 with the updated user data', async () => {
+      const res = await request(app) .put('/user').send(userUpdateData);
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.data).toMatchObject({
+        id: expect.any(Number),
+        ...userUpdateData,
+        birthday: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
+    })
+  })
+
   describe('DELETE /user', () => {
     it ("should return 200 with newly created user", async () => {
       const res = await request(app).delete('/user').send(userDeleteData);
@@ -63,6 +83,7 @@ describe('Testing /user endpoints', () => {
       expect(res.body.data).toMatchObject({
         id: expect.any(Number),
         ...userCreateData,
+        ...userUpdateData,
         birthday: expect.any(String),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),

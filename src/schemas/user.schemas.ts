@@ -42,10 +42,10 @@ export const createUserSchema = yup.object().shape({
 });
 
 export const updateUserSchema = yup.object().shape({
-  emailAddress: yup.string().email("Invalid email format").required("Email is required"),
+  emailAddress: yup.string().email("Invalid email format").singleEmail(undefined, false).required("Email is required"),
   firstName: yup.string().optional(),
   lastName: yup.string().optional(),
-  birtday: yup.date().transform(yupDateUtc).optional(),
+  birthday: yup.date().transform(yupDateUtc).optional(),
   location: yup.string().ianaTz().optional(),
 });
 

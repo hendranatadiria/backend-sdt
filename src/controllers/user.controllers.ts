@@ -1,5 +1,5 @@
 import { NextFunction, type Request, type Response } from 'express';
-import { createUserSchema, deleteUserSchema } from '../schemas/user.schemas';
+import { createUserSchema, deleteUserSchema, updateUserSchema } from '../schemas/user.schemas';
 import { db } from '../config/db';
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -31,6 +31,29 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
       where: {
         emailAddress: data.emailAddress
       }
+    })
+
+    return res.json(result);
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await updateUserSchema.validate(req.body);
+
+    const result = await db.user.update({
+      where: {
+        emailAddress: data.emailAddress
+      },
+       data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        location: data.location,
+        birthday: data.birthday,
+       }
     })
 
     return res.json(result);
