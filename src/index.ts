@@ -17,6 +17,7 @@ const srv = api.listen(port, () => {
   console.log("Backend Assessment SDT")
   console.log("Written by: Bernardinus Hendra Natadiria")
   console.log(`API listening on port ${port}`)
+  
 })
 
 export default srv;
